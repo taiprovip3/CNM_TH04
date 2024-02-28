@@ -1,4 +1,3 @@
-// Khai báo một mảng data mẫu
 const data = [
     {
         maSanPham: 1,
@@ -7,5 +6,4 @@ const data = [
     }
 ]
 
-// Xuất mảng mới có thể dùng ở nơi khác
-module.exports = data;
+module.exports = data; // Xuất mảng mới có thể dùng ở nơi khác

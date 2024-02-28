@@ -1,18 +1,17 @@
 const express = require('express');// Khai báo thư viện express vào biến `express`
 const app = express();// Khởi tạo biến `app` đại diện cho ứng dụng sẽ chạy
 let data = require('./data');// Gọi mảng data để lát nữa push và pop phần tử
-const multer = require('multer');
-const upload = multer();// Khai báo middleware để xử lý dữ liệu từ form đưa lên
 
-app.use(express.static('./templates'));
+app.use(express.urlencoded({ extended: true }));
+app.use(express.static('./views'));// Cho phép dùng các tài nguyên tĩnh như css, javascript, images,...
 app.set('view engine', 'ejs');// Khai báo rằng app sẽ dùng engine EJS để render trang web
-app.set('views', './templates');// Nội dung render trang web sẽ nằm trong thư mục tên `templates`
+app.set('views', './views');// Nội dung render trang web sẽ nằm trong thư mục tên `views`
 
 app.get('/', (req, res) =>{
     return res.render('index', { data: data });// Dùng biến response để render trang `index.ejs` đồng thời truyền biến `data`
 });
 
-app.post('/save', upload.fields([]), (req, res) =>{// Thêm middleware multerupload để chỉnh định rằng chấp nhận xử lý mọi field dữ liệu gởi từ form.
+app.post('/save', (req, res) =>{
     const maSanPham = Number(req.body.maSanPham);// Lấy ra các tham số từ body của form
     const tenSanPham = req.body.tenSanPham;// Lấy ra các tham số từ body của form
     const soLuong  = Number(req.body.soLuong);// Lấy ra các tham số từ body của form
@@ -28,7 +27,7 @@ app.post('/save', upload.fields([]), (req, res) =>{// Thêm middleware multerupl
     return res.redirect('/');// Gọi render lại trang index (để cập nhật dữ liệu table)
 });
 
-app.post('/delete', upload.fields([]), (req, res) => {
+app.post('/delete', (req, res) => {
     const listCheckboxSelected = Object.keys(req.body);// Lấy ra tất cả checkboxes
     //req.body trả về 1 object chứa các cặp key & value định dạng:
     // '123456': 'on',
@@ -36,7 +35,8 @@ app.post('/delete', upload.fields([]), (req, res) => {
     //listCheckboxSelected trả về 1 array: [ '123456', '123458', '96707133' ]
     if(listCheckboxSelected.length <= 0){
         return res.redirect('/');
-    } 
+    }
+    
     function onDeleteItem(length){// Định nghĩa hàm đệ quy xóa
         const maSanPhamCanXoa = Number(listCheckboxSelected[length]);// Lấy ra maSP cần xóa
 
